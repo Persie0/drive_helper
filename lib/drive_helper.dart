@@ -140,11 +140,19 @@ class DriveHelper {
   /// Returns the ID of the file created,
   /// store this to refer to this file in the future.
   Future<String> createFile(
-    String fileName,
-    String mime, {
-    List<String>? parents,
-    String text = "",
-  }) async {
+      String fileName,
+      String mime, {
+        List<String>? parents, // Folder IDs to put the file in
+        List<int>? content, // For binary data like images
+        String text = "", // For text data like JSON
+      }) async {
+    // Determine whether to use text or binary content
+    final mediaStream = content != null
+        ? Stream.value(content) // Binary data stream for images
+        : Stream.value(ascii.encode(text)); // Text stream for JSON or other text files
+
+    final mediaLength = content?.length ?? text.length;
+
     return (await driveAPI.files.create(
       File(
         name: fileName,
@@ -152,8 +160,8 @@ class DriveHelper {
         parents: parents,
       ),
       uploadMedia: Media(
-        Stream.value(ascii.encode(text)),
-        text.length,
+        mediaStream,
+        mediaLength,
       ),
     ))
         .id!;
