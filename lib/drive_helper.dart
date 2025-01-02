@@ -34,7 +34,6 @@ abstract class FileMIMETypes {
   ///
   /// You can still get back a CSV file by choosing the appropriate export type.
   static final file = "application/vnd.google-apps.file";
-
   /// # Folder
   ///
   /// To put a file into a folder,
@@ -180,6 +179,21 @@ class DriveHelper {
     }).asFuture();
     return fileData;
   }
+
+  /// GET the data of [fileID]'s file as bytes (suitable for images)
+  Future<List<int>> getDataBytes(String fileID) async {
+    final file = await driveAPI.files.get(
+      fileID,
+      downloadOptions: DownloadOptions.fullMedia,
+    ) as Media;
+
+    final List<int> fileBytes = [];
+    await file.stream.listen((bytes) {
+      fileBytes.addAll(bytes); // Collect binary data
+    }).asFuture();
+    return fileBytes;
+  }
+
 
   /// Append [data] to an existing file of [fileID]
   ///
