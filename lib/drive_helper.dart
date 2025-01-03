@@ -5,7 +5,7 @@ import 'package:google_sign_in/google_sign_in.dart'
     show GoogleSignIn, GoogleSignInAccount, GoogleUserCircleAvatar;
 import 'package:googleapis/drive/v3.dart'
     show DriveApi, File, Media, DownloadOptions;
-import 'dart:convert' show ascii;
+import 'dart:convert';
 import 'package:http/http.dart'
     show BaseClient, Client, StreamedResponse, BaseRequest;
 
@@ -148,7 +148,7 @@ class DriveHelper {
     // Determine whether to use text or binary content
     final mediaStream = content != null
         ? Stream.value(content) // Binary data stream for images
-        : Stream.value(ascii.encode(text)); // Text stream for JSON or other text files
+        : Stream.value(utf8.encode(text)); // Text stream for JSON or other text files
 
     final mediaLength = content?.length ?? text.length;
 
@@ -228,7 +228,7 @@ class DriveHelper {
         File(),
         fileID,
         uploadMedia: Media(
-          Stream.value(ascii.encode(data)),
+          Stream.value(utf8.encode(data)),
           data.length,
         ),
       );
