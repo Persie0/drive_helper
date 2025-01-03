@@ -145,12 +145,13 @@ class DriveHelper {
         List<int>? content, // For binary data like images
         String text = "", // For text data like JSON
       }) async {
+    final encodedText = utf8.encode(text);
     // Determine whether to use text or binary content
     final mediaStream = content != null
         ? Stream.value(content) // Binary data stream for images
-        : Stream.value(utf8.encode(text)); // Text stream for JSON or other text files
+        : Stream.value(encodedText); // Text stream for JSON or other text files
 
-    final mediaLength = content?.length ?? text.length;
+    final mediaLength = content?.length ?? encodedText.length;
 
     return (await driveAPI.files.create(
       File(
